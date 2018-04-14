@@ -1,0 +1,67 @@
+
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Habit Helper User Score Service</title>
+    <link rel="stylesheet" href="css/foundation.min.css"/>
+    <script src="js/vendor/modernizr.js"></script>
+</head>
+
+<body>
+<div class="row">
+    <div class="large-12 columns">
+        <h2>Apache Camel Example using Servlet REST &amp; Web Container</h2>
+    </div>
+</div>
+
+<div class="row">
+    <div class="large-12 columns">
+        
+        <p/>
+        There is a <i>provider</i> REST service that supports the following operations
+        <ul>
+            <li>GET /rest/provider/{user} - to view a user's score</li>
+            <li>GET /rest/provider/ - to view all users scores</li>
+            <li>PUT /rest/provider - to update a user's score</li>
+        </ul>
+
+        The view operations are HTTP GET, and update is using HTTP PUT.
+
+        From a web browser you can access the first two services using the following links
+
+        <ul>
+            <li><a href="rest/provider/{user}">rest/provider/{user}</a> - to view the score of the user</li>
+            <li><a href="rest/provider/">rest/provider/</a> - to list all score</li>
+        </ul>
+
+        From the command shell you can use curl to access the service as shown below:
+<pre>
+    curl -X GET -H "Accept: application/json" http://localhost:8080/providerservice/rest/provider/{user}
+    curl -X GET -H "Accept: application/json" http://localhost:8080/providerservice/rest/provider
+    curl -X PUT -d "{ \"score\": 23 , \"userName\": \"Dr. Who\"}" -H "Accept: application/json" http://localhost:8080/rest/provider
+</pre>
+
+        Notice when trying to get provider with id 789 then there is a built-in delay of 0.5-2 seconds, to simulate some
+        slowness in the service.
+
+        <p/>
+        This example offers an API browser using Swagger which is accessible from the following link
+        <ul>
+            <li><a href="api-docs">api-docs</a> - overview of the apis from the REST services</li>
+            <li><a href="api-docs/provider">api-docs/provider</a> - api of the provider REST service</li>
+        </ul>
+
+        <p/>
+        To use the swagger ui, follow this link. Replace the URL value with this one to access the REST local resources (http://localhost:8080/api-docs 
+        <ul>
+            <li><a href="index.html">swagger</a> - swagger ui page</li>
+        </ul>
+
+        <p/>
+        If you hit any problems please let me know!  Bob
+    </div>
+</div>
+</body>
+
+</html>

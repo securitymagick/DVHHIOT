@@ -1,0 +1,4 @@
+INSERT INTO posts VALUES (1, 'Welcome to Habit Helper', 'welcome.jpg', 'I just want to welcome everyone to habit helper.  I hope you get the help you need.','Lizzie');
+INSERT INTO posts VALUES (2, 'Therapist Sucks', 'therapy.jpg', 'Seriously, the therapist sucks.' ,'Duck');
+INSERT INTO posts VALUES (3, 'Massive improvement', 'baby-elephant-playing-with-ducks.jpg', 'I am doing better at not feeding animals when there is a sign saying not to.  I think its all you Habit helper! ','John');
+INSERT INTO posts VALUES (4, 'Security Update Coming Soon', 'security-update.jpg', 'Next week we are upgrading our login system for better security.','Lizzie');
