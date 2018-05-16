@@ -23,11 +23,14 @@ import org.springframework.web.servlet.ModelAndView;
 import com.securitymagick.domain.Permissions;
 import com.securitymagick.domain.Post;
 import com.securitymagick.domain.PostComment;
+import com.securitymagick.domain.User;
 import com.securitymagick.domain.AdminDBItem;
+import com.securitymagick.domain.AuthToken;
 import com.securitymagick.domain.ForumPostForm;
 import com.securitymagick.domain.Notifications;
 import com.securitymagick.domain.dao.AdminDao;
 import com.securitymagick.domain.dao.PostDao;
+import com.securitymagick.domain.dao.UserDao;
 import com.securitymagick.web.cookie.CookieHandler;
 import com.securitymagick.web.cookie.NotificationCookie;
 import com.securitymagick.web.cookie.PermissionsCookie;
@@ -68,6 +71,9 @@ public class PublicController {
 	
 	@Autowired
 	AdminDao adminDao;	
+	
+	@Autowired
+	UserDao userDao;
 
 	@RequestMapping(value = "/public", method = RequestMethod.GET)
 	public ModelAndView showPublic(HttpServletRequest request, HttpServletResponse response) {
@@ -145,7 +151,15 @@ public class PublicController {
 		CookieHandler userCookie = new CookieHandler("user");
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			request.setAttribute("user", c.getValue());
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+					}
+				}
+			}
 		}	
 		List<AdminDBItem> items= adminDao.getAdminDB();
 		for (AdminDBItem item: items) {
@@ -222,7 +236,16 @@ public class PublicController {
 		}
 		CookieHandler uCookie = new CookieHandler("user");
 		if (uCookie.checkForCookie(request)) {
-			request.setAttribute("user", uCookie.getCookie().getValue());
+			
+			AuthToken aToken = new AuthToken(uCookie.getCookie().getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+					}
+				}
+			}
 		}
 		
 		request.setAttribute(FORUM, "");

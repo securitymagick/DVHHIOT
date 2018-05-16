@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.securitymagick.domain.AuthToken;
 import com.securitymagick.domain.User;
 import com.securitymagick.domain.UsernameForm;
 import com.securitymagick.domain.dao.UserDao;
@@ -49,7 +50,8 @@ public class ForgotPasswordController {
 		}
 		
 		User u = ulist.get(0);
-		userCookie.addCookie(response, u.getUsername());
+		AuthToken aToken = new AuthToken(u.getId());
+		userCookie.addCookie(response, aToken.getToken());
 		return "redirect:/resetpassword";
 
 	}

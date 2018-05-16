@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import com.securitymagick.domain.AuthToken;
 import com.securitymagick.domain.LogMessage;
 import com.securitymagick.domain.ResetPasswordForm;
 import com.securitymagick.domain.User;
@@ -35,12 +36,22 @@ public class ResetPasswordController {
 		CookieHandler userCookie = new CookieHandler("user");
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			List<User> ulist = userDao.getUser(c.getValue());
-			if (ulist.size() != 1) {
-				return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";		
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {	
+						request.setAttribute("question", u.getQuestion());
+						found = true;
+					}
+				}
+				if (!found) {
+					return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
+				}
+			} else {
+				return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
 			}
-			User u = ulist.get(0);
-			request.setAttribute("question", u.getQuestion());
 		}
 
 		model.addAttribute("resetPasswordForm", resetPasswordForm);		
@@ -55,32 +66,43 @@ public class ResetPasswordController {
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
 			if (resetPasswordForm.getPassword().equals(resetPasswordForm.getConfirmPassword())) {
-					List<User> ulist = userDao.getUser(c.getValue());
-					if (ulist.size() != 1) {
-						return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry";		
+				AuthToken aToken = new AuthToken(c.getValue());
+				if (aToken.parseToken()) {
+					List<User> ulist = userDao.getUsers();
+					Boolean found = false;
+					for (User u: ulist) {
+						if (u.getId().equals(aToken.getUid())) {	
+							found = true;
+							if (u.getAnswer().equals(resetPasswordForm.getAnswer())) {
+								LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password reset successful for user.");	
+								logDao.addLog(lm);
+								userDao.updatePassword(u.getUsername(), resetPasswordForm.getPassword());
+								return "redirect:/?login=yes&message=Password updated.  Please login.";
+							}
+							else {
+								LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password reset failed for user.");	
+								logDao.addLog(lm);
+								String message = "Incorrect information!";
+								request.setAttribute("message", message);
+								return "redirect:/?resetpassword=yes&message=" + message;	
+							}
+						}
 					}
-					User u = ulist.get(0);
-					if (u.getAnswer().equals(resetPasswordForm.getAnswer())) {
-						LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password reset successful for user.");	
-						logDao.addLog(lm);
-						userDao.updatePassword(u.getUsername(), resetPasswordForm.getPassword());
-						return "redirect:/?login=yes&message=Password updated.  Please login.";
+					if (!found) {
+						return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
 					}
-					else {
-						LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password reset failed for user.");	
-						logDao.addLog(lm);
-						String message = "Incorrect information!";
-						request.setAttribute("message", message);
-						return "redirect:/?resetpassword=yes&message=" + message;	
-					}
+				} else {
+					return "redirect:/?resetpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
+				}
+					
 			} else {
 				String message = "Passwords do not match!";
 				request.setAttribute("message", message);
 				return "redirect:/?resetpassword=yes&message=" + message;	
 			}
-		} else {
-			return "redirect:/?forgotpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
-		}
+		} 
+		return "redirect:/?forgotpassword=yes&message=Unexpected error.  Please Try again or contact Bob or Harry.";
+		
 	}
 
 

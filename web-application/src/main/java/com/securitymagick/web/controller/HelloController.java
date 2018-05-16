@@ -1,30 +1,30 @@
 package com.securitymagick.web.controller;
 
 import java.util.List;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.validation.BindingResult;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Cookie;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import com.securitymagick.domain.LoginForm;
-import com.securitymagick.domain.Permissions;
-import com.securitymagick.domain.RegistrationForm;
-import com.securitymagick.domain.ResetPasswordForm;
-import com.securitymagick.domain.User;
-import com.securitymagick.domain.UsernameForm;
-import com.securitymagick.domain.dao.UserDao;
 import com.securitymagick.web.cookie.CookieHandler;
+import com.securitymagick.domain.Permissions;
 import com.securitymagick.web.cookie.PermissionsCookie;
+import com.securitymagick.domain.AuthToken;
+import com.securitymagick.domain.LoginForm;
+import com.securitymagick.domain.UsernameForm;
+import com.securitymagick.domain.RegistrationForm;
+import com.securitymagick.domain.User;
+import com.securitymagick.domain.dao.UserDao;
+import com.securitymagick.domain.ResetPasswordForm;
 
 @Controller
 public class HelloController {
@@ -179,13 +179,24 @@ public class HelloController {
 		CookieHandler userCookie = new CookieHandler("user");
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			List<User> ulist = userDao.getUser(c.getValue());
-			if (ulist.size() != 1) {
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {	
+						request.setAttribute("question", u.getQuestion());
+						found = true;
+					}
+				}
+				if (!found) {
+					request.setAttribute(MESSAGE_ATTRIBUTE, "Unexpected error.  Please Try again.");
+					return HELLO_PAGE;		
+				}
+			} else {
 				request.setAttribute(MESSAGE_ATTRIBUTE, "Unexpected error.  Please Try again.");
 				return HELLO_PAGE;		
 			}
-			User u = ulist.get(0);
-			request.setAttribute("question", u.getQuestion());
 		}		
 		request.setAttribute(ABOUT, "");
 		request.setAttribute(HOW, "");

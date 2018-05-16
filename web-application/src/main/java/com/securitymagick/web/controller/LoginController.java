@@ -63,7 +63,8 @@ public class LoginController {
 		if (loginForm.getPassword().equals(u.getPassword())) {
 			Permissions p = new Permissions(u.getIsUser().equals(1), u.getIsAdmin().equals(1));
 			pCookie.addCookie(response, p.getCookieValue());
-			userCookie.addCookie(response, u.getUsername());
+			AuthToken aToken = new AuthToken(u.getId());
+			userCookie.addCookie(response, aToken.getToken());			
 			return "redirect:/myAccount";
 		} else {
 			Permissions p = new Permissions();
@@ -113,7 +114,7 @@ public class LoginController {
 				if (u.getId().equals(aToken.getUid())) {
 					Permissions p = new Permissions(u.getIsUser().equals(1), u.getIsAdmin().equals(1));
 					pCookie.addCookie(response, p.getCookieValue());
-					userCookie.addCookie(response, u.getUsername());
+					userCookie.addCookie(response, aToken.getToken());
 				}
 			}
 		} 

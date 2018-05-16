@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.securitymagick.domain.AdminDBItem;
+import com.securitymagick.domain.AuthToken;
 import com.securitymagick.domain.LogMessage;
 import com.securitymagick.domain.UpdateHabitForm;
 import com.securitymagick.domain.UpdatePasswordForm;
@@ -89,7 +90,22 @@ public class MyAccountController {
 		}		
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			request.setAttribute("user", c.getValue());
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+						found = true;
+					}
+				}
+				if (!found) {
+					return REDIRECT_LOGIN;
+				}
+			} else {
+				return REDIRECT_LOGIN;
+			}
 		}
 		
 		List<AdminDBItem> items= adminDao.getAdminDB();
@@ -115,7 +131,22 @@ public class MyAccountController {
 		}		
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			request.setAttribute("user", c.getValue());
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+						found = true;
+					}
+				}
+				if (!found) {
+					return REDIRECT_LOGIN;
+				}
+			} else {
+				return REDIRECT_LOGIN;
+			}
 		}	
 		List<AdminDBItem> items= adminDao.getAdminDB();
 		for (AdminDBItem item: items) {
@@ -140,7 +171,22 @@ public class MyAccountController {
 		}		
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			request.setAttribute("user", c.getValue());
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+						found = true;
+					}
+				}
+				if (!found) {
+					return REDIRECT_LOGIN;
+				}
+			} else {
+				return REDIRECT_LOGIN;
+			}
 		}
 		List<AdminDBItem> items= adminDao.getAdminDB();
 		for (AdminDBItem item: items) {
@@ -165,11 +211,22 @@ public class MyAccountController {
 		}		
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			request.setAttribute("user", c.getValue());
-			List<User> ulist = userDao.getUser(c.getValue());
-			if (ulist.size() == 1) {
-				User u = ulist.get(0);			
-				request.setAttribute("habit", u.getHabit());
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {				
+						request.setAttribute("user", u.getUsername());
+						request.setAttribute("habit", u.getHabit());
+						found = true;
+					}
+				}
+				if (!found) {
+					return REDIRECT_LOGIN;
+				}
+			} else {
+				return REDIRECT_LOGIN;
 			}
 		}
 		List<AdminDBItem> items= adminDao.getAdminDB();
@@ -202,14 +259,26 @@ public class MyAccountController {
 		}		
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
-			List<User> ulist = userDao.getUser(c.getValue());
-			if (ulist.size() == 1) {
-				User u = ulist.get(0);
-				userDao.updateUser(u);		
-				message = "The habit has been updated!";	
-				LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Habit update successful for user.");	
-				logDao.addLog(lm);				
-			}
+			AuthToken aToken = new AuthToken(c.getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {
+						u.setHabit(updateHabitForm.getHabit());
+						userDao.updateUser(u);		
+						message = "The habit has been updated!";	
+						LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Habit update successful for user.");	
+						logDao.addLog(lm);		
+						found = true;
+					}
+				}
+				if (!found) {
+					return REDIRECT_LOGIN;
+				}
+			} else {
+				return REDIRECT_LOGIN;
+			}			
 		}
 		List<AdminDBItem> items= adminDao.getAdminDB();
 		for (AdminDBItem item: items) {
@@ -241,14 +310,25 @@ public class MyAccountController {
 		if (userCookie.checkForCookie(request)) {
 			Cookie c = userCookie.getCookie();
 			if (updatePasswordForm.getPassword().equals(updatePasswordForm.getConfirmPassword())) {
-					List<User> ulist = userDao.getUser(c.getValue());
-					if (ulist.size() == 1) {
-						message = "Password update successful!";
-						User u = ulist.get(0);
-						LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password update successful for user.");	
-						logDao.addLog(lm);
-						userDao.updatePassword(u.getUsername(), updatePasswordForm.getPassword());
+				AuthToken aToken = new AuthToken(c.getValue());
+				if (aToken.parseToken()) {
+					List<User> ulist = userDao.getUsers();
+					Boolean found = false;
+					for (User u: ulist) {
+						if (u.getId().equals(aToken.getUid())) {
+							message = "Password update successful!";
+							LogMessage lm = new LogMessage(null, u.getUsername(), request.getHeader("user-agent"), "Password update successful for user.");	
+							logDao.addLog(lm);
+							userDao.updatePassword(u.getUsername(), updatePasswordForm.getPassword());	
+							found = true;
+						}
 					}
+					if (!found) {
+						return REDIRECT_LOGIN;
+					}
+				} else {
+					return REDIRECT_LOGIN;
+				}				
 			} else {
 				message = "Passwords do not match!";
 			}

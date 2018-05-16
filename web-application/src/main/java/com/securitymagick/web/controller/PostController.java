@@ -14,15 +14,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.securitymagick.domain.AuthToken;
 import com.securitymagick.domain.Post;
 import com.securitymagick.domain.PostComment;
+import com.securitymagick.domain.User;
 import com.securitymagick.domain.dao.PostDao;
+import com.securitymagick.domain.dao.UserDao;
 import com.securitymagick.web.cookie.CookieHandler;
 
 @Controller
 public class PostController {
 	@Autowired
 	PostDao postDao;
+	
+	@Autowired
+	UserDao userDao;
 	
 
 	@RequestMapping(value = "/post", method = RequestMethod.GET)
@@ -39,7 +45,16 @@ public class PostController {
 		}
 		CookieHandler uCookie = new CookieHandler("user");
 		if (uCookie.checkForCookie(request)) {
-			request.setAttribute("user", uCookie.getCookie().getValue());
+			AuthToken aToken = new AuthToken(uCookie.getCookie().getValue());
+			if (aToken.parseToken()) {
+				List<User> ulist = userDao.getUsers();
+				Boolean found = false;
+				for (User u: ulist) {
+					if (u.getId().equals(aToken.getUid())) {	
+						request.setAttribute("user", u.getUsername());
+					}
+				}
+			}
 		}
 		
 		return "redirect:/public?read=yes&id=" + postid.toString();
