@@ -173,6 +173,7 @@
 		</c:if>
 	</p>
 	<form:form id="fm1" modelAttribute="loginForm" method="post" action="login">
+	<form:input type="hidden" id="rememberMeToken" name="rememberMeToken" path="rememberMeToken" value="" />
 	<div class="row">
 		<div class="col-md-4">
 			<p> Username: </p>
@@ -191,18 +192,24 @@
 	</div>	
 	<div class="row">
 		<div class="col-md-4">
+			<p> Stay logged in: </p>
+		</div>
+		<div class="col-md-6 col-md-offset-1">
+	 		<p><form:checkbox class="form-control" path="rememberme" id="rememberme" onChange="turnRememberMeOn()"/> </p>
+	 	</div>
+	 </div>
+	<div class="row">
+		<div class="col-md-4">
 		</div>
 		<div class="col-md-6 col-md-offset-1">
 		<p> 
 			<button class="btn btn-info btn-lg" class="form-control" type="submit" value="Submit" >Login</button> 
+			<a class="btn btn-default btn-lg" href="forgotpassword" role="button">Forgot your Password?</a>
 		</p>
 		</div>
 	</div>
     </form:form>
-	</br></br>
-	<p>
-		<a class="btn btn-default btn-lg" href="forgotpassword" role="button">Forgot your Password?</a>
-	</p>
+	
 	</div>
 </c:if>
 <c:if test="${not empty forgotpassword}">
@@ -301,17 +308,18 @@
 			}
 			if (!mobile) {
 		%>
-  <div class="row text-center">
-	<div class="col-md-5 col-md-offset-1 col-xs-6 well">
+<div class="row text-center">
+	<div class="col-md-8 col-md-offset-2 col-xs-10 col-xs-offset-1 well">
 		<font color="orange" size="32px">
-		<i class='glyphicon glyphicon-user'></i>
+<i class='glyphicon glyphicon-user'></i>
 		</font>
 		<h2>Login</h2>
 		<p>To get help resisting your bad habits</p>
 		<p>
 			<a class="btn btn-warning btn-lg" href="?login" role="button">View details</a>
-		</p>
 	</div>
+  </div>		
+  <div class="row text-center">
 	<div class="col-md-5 col-md-offset-1 col-xs-6 well">
 		<font color="orange" size="32px">
 		<i class='glyphicon glyphicon-plus'></i>
@@ -323,6 +331,16 @@
 			<a class="btn btn-default btn-lg" href="?register" role="button">View details</a>
 		</p>
 	</div>
+	<div class="col-md-5 col-md-offset-1 col-xs-6 well">
+		<font color="orange" size="32px">
+		<i class='glyphicon glyphicon-question-sign'></i>
+		</font>
+		<h2>Forgot</h2>
+		<p>Reset your password here</p>
+		<p>
+			<a class="btn btn-default btn-lg" href="?forgotpassword" role="button">View details</a>
+		</p>
+	</div>	
   </div>	
   <div class="row text-center">
 	<div class="col-md-5 col-md-offset-1 col-xs-6 well">
@@ -356,7 +374,7 @@
   </footer>
 </div>
  </div>
-
+<jsp:include page='javascript_includes.jsp'></jsp:include> 
  
 </body>
 </html>

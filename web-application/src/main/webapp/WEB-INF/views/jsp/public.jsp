@@ -47,11 +47,11 @@
 	<form id="fm1" enctype="multipart/form-data" method="post" action="?write=yes&uploadfile=yes">
 	<div class="row">
 		<div class="col-md-4">
-			<p> To make every post helpful to our other users please upload an inspiring image.
+			<p> To make every post helpful to our other users please upload an inspring image.
 			<p> Select Image file to upload: </p>
 		</div>
 		<div class="col-md-6 col-md-offset-1">
-			<p> <input type="file" class="form-control" name="file"  value="" /> </p>
+			<p> <input type="file" name="file"  value="" /> </p>
 		</div>
 	</div>
 	<div class="row">
@@ -73,9 +73,10 @@
 			<p> Enter Title (Inspiring or Call for Help): </p>
 		</div>
 		<div class="col-md-4">
-			<p> <form:input type="text" name="title" path="title"  class="form-control" value="" /> </p>
+			<p> <form:input type="text" name="title" path="title"  value="" /> </p>
 			    <form:input type="hidden" name="author" path="author" value="${user}" />
-				 <form:input type="hidden" name="imageName" path="imageName" class="form-control" value="${imageName}" />
+				 <form:input type="hidden" name="imageName" path="imageName" value="${imageName}" />
+				 <form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 		</div>
 	</div>
 	<div class="row">
@@ -83,7 +84,7 @@
 			<p> Post: </p>
 		</div>	
 		<div class="col-md-6 col-md-offset-1">
-			<p> <form:textarea name="thePost" path="thePost" value="" class="form-control" rows="5" cols="60" onkeyup="testText(document.forms.fm2.thePost.value, 'jsCheck', document.forms.fm2.submitPost)" /> </p>
+			<p> <form:textarea name="thePost" path="thePost" value="" rows="5" cols="60" onkeyup="testText(document.forms.fm2.thePost.value, 'jsCheck', document.forms.fm2.submitPost)" /> </p>
 		</div>
 	</div>	
 	<p id='jsCheck'></p>
@@ -92,7 +93,7 @@
 		</div>
 		<div class="col-md-6 col-md-offset-1">
 		<p> 
-			<button class="btn btn-info btn-lg" class="form-control" type="submit" value="Submit" name="submitPost" >Submit</button> 
+			<button class="btn btn-info btn-lg" type="submit" value="Submit" name="submitPost" >Submit</button> 
 		</p>
 		</div>
 	</div>
@@ -139,12 +140,13 @@
 			<p> Comment: </p>
 		</div>	
 		<div class="col-md-6 col-md-offset-1">
-			<p> <form:textarea class="form-control" name="comment" path="comment" value="" rows="5" cols="60" onkeyup="testText(document.forms.fm1.comment.value, 'jsComment', document.forms.fm1.submitComment)" /> </p>
+			<p> <form:textarea name="comment" path="comment" value="" rows="5" cols="60" onkeyup="testText(document.forms.fm1.comment.value, 'jsComment', document.forms.fm1.submitComment)" /> </p>
 		</div>
 	</div>
 	<p id='jsComment'></p>
 	<form:input type="hidden" name="postid" path="postid" value="${post.id}" />
     <form:input type="hidden" name="username" path="username" value="${user}" />	
+    <form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 	
 	<div class="row">
 		<div class="col-md-4">
@@ -220,6 +222,6 @@
   </footer>
 </div>
 
- 
+ <jsp:include page='javascript_includes.jsp'></jsp:include> 
 </body>
 </html>

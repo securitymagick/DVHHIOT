@@ -10,6 +10,7 @@ public class ForumPostForm {
 	private String author;
 	private String imageName;
 	private String thePost;
+	private String csrfToken = "";
 	
 	public ForumPostForm() {
 		super();
@@ -24,6 +25,40 @@ public class ForumPostForm {
 		this.thePost = thePost;
 	}
 	
+	
+	
+	/**
+	 * @param title
+	 * @param author
+	 * @param imageName
+	 * @param thePost
+	 * @param csrfToken
+	 */
+	public ForumPostForm(String title, String author, String imageName, String thePost, String csrfToken) {
+		this.title = title;
+		this.author = author;
+		this.imageName = imageName;
+		this.thePost = thePost;
+		this.csrfToken = csrfToken;
+	}
+
+
+	/**
+	 * @return the csrfToken
+	 */
+	public final String getCsrfToken() {
+		return csrfToken;
+	}
+
+
+	/**
+	 * @param csrfToken the csrfToken to set
+	 */
+	public final void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
+	}
+
+
 	public String getTitle() {
 		return title;
 	}

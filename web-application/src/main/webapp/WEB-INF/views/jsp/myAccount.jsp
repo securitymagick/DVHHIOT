@@ -23,7 +23,7 @@
 var eliza = new ElizaBot();
 var elizaLines = new Array();
 
-var displayCols = 60;
+var displayCols = 50;
 var displayRows = 20;
 
 function elizaReset() {
@@ -35,6 +35,7 @@ function elizaReset() {
 function elizaStep() {
 	var f = document.forms.e_form;
 	var userinput = f.e_input.value;
+	 
 	if (eliza.quit) {
 		f.e_input.value = '';
 		if (confirm("This session is over.\nStart over?")) elizaReset();
@@ -43,7 +44,7 @@ function elizaStep() {
 	}
 	else if (userinput != '') {
 		var usr = 'YOU:   ' + userinput;
-		var rpl ='ELIZA: ' + eliza.transform(userinput);
+		var rpl ='Dr. Eliza: ' + eliza.transform(userinput);
 		elizaLines.push(usr);
 		elizaLines.push(rpl);
 		// display nicely
@@ -66,6 +67,22 @@ function elizaStep() {
 	}
 	f.e_input.value = '';
 	f.e_input.focus();
+}
+
+function elizaInit() {
+	document.getElementById("ElizaNote").innerHTML = "Dr. Eliza is writing a message";
+}
+
+function elizaClear() {
+	 document.getElementById("ElizaNote").innerHTML = "";
+}
+
+function elizaOutput() {
+	var x = Math.floor((Math.random() * 750) + 250);
+	setTimeout(elizaInit, x);
+	var y = Math.floor((Math.random() * 4000) + 1001);
+	setTimeout(elizaStep,y);
+	setTimeout(elizaClear, y-x);
 }
 
 //-->
@@ -258,8 +275,8 @@ function getScore() {
      <div class="well text-center">
 	<h2>Talk to our online therapist</h2>
 	<p>
-	<FORM NAME="e_form" onsubmit="elizaStep();return false">
-    <TEXTAREA NAME="e_display" class="form-control" COLS="70" ROWS="25"></TEXTAREA>
+	<FORM NAME="e_form" onsubmit="elizaOutput();return false">
+    <TEXTAREA NAME="e_display" class="form-control" COLS="50" ROWS="25"></TEXTAREA>
 	</p><p>
     <INPUT TYPE="text" NAME="e_input" class="form-control">
 	</p><p>
@@ -267,6 +284,7 @@ function getScore() {
 	<button class="btn btn-default btn-lg" class="form-control" TYPE="reset" VALUE="Reset" onClick="window.setTimeout('elizaReset()',100)">reset</button>
     </FORM>	
 	</p>
+	<p id="ElizaNote"/>
 	</div>
 </c:if>	
 		<% 
@@ -347,6 +365,6 @@ function getScore() {
 		<p>&copy; Habit Helper 2017</p>
   </footer>
 </div>
- 
+ <jsp:include page='javascript_includes.jsp'></jsp:include> 
 </body>
 </html>

@@ -39,6 +39,9 @@ var elizaPres = [
 "machine", "computer",
 "machines", "computer",
 "computers", "computer",
+"sidhartha", "buddha",
+"buddhism", "buddha",
+"buddhist", "buddha",
 "were", "was",
 "you're", "you are",
 "i'm", "i am",
@@ -61,13 +64,16 @@ var elizaPosts = [
 
 var elizaSynons = {
 "be": ["am", "is", "are", "was"],
-"belief": ["feel", "think", "believe", "wish"],
+"belief": ["feel", "think", "believe", "opinion", "notion", "theory", "impression", "conclude", "conclusion", "view", "conviction", "idea", "judge"],
 "cannot": ["can't"],
-"desire": ["want", "need"],
-"everyone": ["everybody", "nobody", "noone"],
-"family": ["mother", "mom", "father", "dad", "sister", "brother", "wife", "children", "child"],
-"happy": ["elated", "glad", "better"],
-"sad": ["unhappy", "depressed", "sick"]
+"desire": ["want", "need", "lust", "crave", "yearn", "aspire", "wish", "fancy"],
+"everyone": ["everybody", "nobody", "noone", "anybody", "people", "populace", "everyman"],
+"family": ["mother", "mom", "father", "dad", "sister", "brother", "wife", "children", "child", "son", "daughter", "aunt", "uncle", "cousin", "husband", "nephew", "niece"],
+"happy": ["elated", "glad", "better", "joyous", "content", "delighted", "cheerful", "joyful", "merry", "satisfied", "carefree", "untroubled", "contented", "radiant", "jovial"],
+"sad": ["unhappy", "depressed", "sick", "anxious", "dejected", "miserable", "melancholy", "heartbroken", "inconsolable", "sorrowful", "forlorn", "wretched", "downcast"],
+"anger": ["hatred", "hate", "angry", "mad", "temper","enraged", "furious"],
+"past": ["future"],
+"hello": ["hi", "hey"]
 };
 
 var elizaKeywords = [
@@ -96,7 +102,8 @@ var elizaKeywords = [
      "Do you feel strongly about discussing such things ?",
      "That is interesting.  Please continue.",
      "Tell me more about that.",
-     "Does talking about this bother you ?"
+     "Does talking about this bother you ?",
+     "As Buddha says: Three things can not hide for long: the Moon, the Sun and the Truth."    
   ]]
 ]],
 ["sorry", 0, [
@@ -104,9 +111,44 @@ var elizaKeywords = [
      "Please don't apologise.",
      "Apologies are not necessary.",
      "I've told you that apologies are not required.",
-     "It did not bother me.  Please continue."
+     "It does not bother me.  Please continue."
   ]]
 ]],
+["past", 2, [
+	["*", [
+		"Do not dwell in the past, do not dream of the future, concentrate the mind on the present moment.  How are you doing right now in the present?",
+		"The past cannot be changed. The future is yet in your power.  How should you proceed?",
+		"Gratitude makes sense of our past, brings peace for today, and creates a vision for tomorrow."
+	]]
+]],
+["health", 2, [
+	["*", [
+		"As Buddha says, health is the greatest gift, contentment the greatest wealth, faithfulness the best relationship.",
+		"To keep the body in good health is a duty... otherwise we shall not be able to keep our mind strong and clear.",
+		"I believe that the greatest gift you can give your family and the world is a healthy you."
+	]]
+]],
+["anger", 2, [
+	 ["*", [
+	     "Anger is not useful in this case.",
+	     "Remember what Buddha said: Holding on to anger is like grasping a hot coal with the intent of throwing it at someone else; you are the one who gets burned",
+	     "Anger will never disappear so long as thoughts of resentment are cherished in the mind.",
+	     "From Buddha: Speak the truth, do not become angered, and give when asked, even be it a little. By these three conditions, one goes to the presence of the gods.",
+	     "Hatred does not cease by hatred, but only by love; this is the eternal rule.  Another Buddha quote."
+	  ]]
+	]],
+["buddha", 2, [
+	["*are you* buddh*", [
+		"I find Buddha was an enlightend philospher. He's words are very useful",
+		"I am agnostic, and try to use all philosohers and religions."
+	]],
+	["*", [
+	     "In this case, let's forget Buddha for a few minutes.  Tell me more about what your feeling.",
+	     "Remember what Buddha said: Work out your own salvation. Do not depend on others.",
+	     "From Buddha: Thousands of candles can be lighted from a single candle, and the life of the candle will not be shortened. Happiness never decreases by being shared.",
+	     "As Buudha says: Those who are free of resentful thoughts surely find peace."
+	  ]]
+	]],	
 ["apologise", 0, [
  ["*", [
      "goto sorry"
@@ -192,9 +234,15 @@ var elizaKeywords = [
   ]]
 ]],
 ["name", 15, [
+ ["*hello*", [
+     "goto hello",
+  ]],	
+  ["*hi*", [
+     "goto hello",
+  ]],	
  ["*", [
      "I am not interested in names.",
-     "I've told you before, I don't care about names -- please continue."
+     "I've told you before, I don't care about we don't need names. Please continue."
   ]]
 ]],
 ["deutsch", 0, [
@@ -226,7 +274,19 @@ var elizaKeywords = [
      "I speak only English."
   ]]
 ]],
-["hello", 0, [
+["hello", 1, [
+["*i'm *", [
+     "How do you do, (2).  Please state your problem.",
+     "Hi, (2).  What seems to be your problem ?"
+  ]],
+  ["*i am *", [
+     "How do you do, (2).  Please state your problem.",
+     "Hi, (2).  What seems to be your problem ?"
+  ]],	
+  ["*my name is *", [
+     "How do you do, (2).  Please state your problem.",
+     "Hi, (2).  What seems to be your problem ?"
+  ]],	
  ["*", [
      "How do you do.  Please state your problem.",
      "Hi.  What seems to be your problem ?"
@@ -326,6 +386,7 @@ var elizaKeywords = [
      "I am sorry to hear that you are (3).",
      "Do you think coming here will help you not to be (3) ?",
      "I'm sure it's not pleasant to be (3).",
+     "What is the first event that comes to mind when you say you are (3)",
      "Can you explain what made you (3) ?"
   ]],
  ["* i am* @happy *", [
@@ -334,11 +395,17 @@ var elizaKeywords = [
      "What makes you (3) just now ?",
      "Can you explain why you are suddenly (3) ?"
   ]],
+  ["* i am* @anger *", [
+	 "Deep breath.  How has this evolved?",
+     "Has your treatment helped with being (3) ?",
+     "Just now you were talking about being (3) .... Is there a specific event you want to tell me about.  Let's try to make peace with it.",
+     "goto anger"
+  ]], 
  ["* i was *", [
      "goto was"
   ]],
  ["* i @belief i *", [
-     "Do you really think so ?",
+     "Do you really think that",
      "But you are not sure you (3).",
      "Do you really doubt you (3) ?"
   ]],
@@ -357,6 +424,7 @@ var elizaKeywords = [
      "Have you tried ?",
      "Perhaps you could (3) now.",
      "Do you really want to be able to (3) ?",
+     "What would change if you could (3)",
      "What if you could (3) ?"
   ]],
  ["* i don't *", [
@@ -366,7 +434,7 @@ var elizaKeywords = [
      "Does that trouble you ?"
   ]],
  ["* i feel *", [
-     "Tell me more about such feelings.",
+     "Tell me more about these feelings.",
      "Do you often feel (2) ?",
      "Do you enjoy feeling (2) ?",
      "Of what does feeling (2) remind you ?"
@@ -413,8 +481,8 @@ var elizaKeywords = [
 ["yes", 0, [
  ["*", [
      "You seem to be quite positive.",
-     "You are sure.",
-     "I see.",
+     "You are sure.  Go on.",
+     "I see.  Tell me more.",
      "I understand."
   ]]
 ]],
@@ -422,7 +490,7 @@ var elizaKeywords = [
  ["* no one *", [
      "Are you sure, no one (2) ?",
      "Surely someone (2) .",
-     "Can you think of anyone at all ?",
+     "Can't you think of anyone at all ?",
      "Are you thinking of a very special person ?",
      "Who, may I ask ?",
      "You have a particular person in mind, don't you ?",
@@ -431,7 +499,7 @@ var elizaKeywords = [
  ["*", [
      "Are you saying no just to be negative?",
      "You are being a bit negative.",
-     "Why not ?",
+     "Why not?",
      "Why 'no' ?"
   ]]
 ]],
@@ -480,6 +548,16 @@ var elizaKeywords = [
      "What comes to mind when you ask that ?",
      "Have you asked such questions before ?",
      "Have you asked anyone else ?"
+  ]]
+]],
+["hi", 1, [
+ ["hi *", [
+     "goto hello"
+  ]]
+]],
+["hey", 0, [
+ ["hey *", [
+     "goto hello"
   ]]
 ]],
 ["who", 0, [
@@ -605,7 +683,9 @@ var elizaPostTransforms = [
 	/Are they( always)? me\b/, "it is$1 me",
 	/\bthat your( own)? (\w+)( now)? \?/, "that you have your$1 $2 ?",
 	/\bI to have (\w+)/, "I have $1",
-	/Earlier you said your( own)? (\w+)( now)?\./, "Earlier you talked about your $2."
+	/Earlier you said your( own)? (\w+)( now)?\./, "Earlier you talked about your $2.",
+	/was who/, "was the one who",
+	/understand I/, "understand me"
 ];
 
 // eof

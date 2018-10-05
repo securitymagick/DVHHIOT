@@ -11,7 +11,7 @@ public class AdminDBItem {
 	private Integer id = null;
 	private String settingName = null;
 	private String settingValue= null;
-	
+	private String csrfToken = "";	
 	
 	
 	/**
@@ -34,6 +34,39 @@ public class AdminDBItem {
 		this.settingName = settingName;
 		this.settingValue = settingValue;
 	}
+
+
+	/**
+	 * @param id
+	 * @param settingName
+	 * @param settingValue
+	 * @param csrfToken
+	 */
+	public AdminDBItem(Integer id, String settingName, String settingValue, String csrfToken) {
+		this.id = id;
+		this.settingName = settingName;
+		this.settingValue = settingValue;
+		this.csrfToken = csrfToken;
+	}
+
+
+
+	/**
+	 * @return the csrfToken
+	 */
+	public final String getCsrfToken() {
+		return csrfToken;
+	}
+
+
+
+	/**
+	 * @param csrfToken the csrfToken to set
+	 */
+	public final void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
+	}
+
 
 
 	/**

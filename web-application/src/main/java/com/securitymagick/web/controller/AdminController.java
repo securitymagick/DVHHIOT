@@ -24,6 +24,7 @@ import com.securitymagick.domain.dao.AdminDao;
 import com.securitymagick.domain.dao.LogDao;
 import com.securitymagick.domain.dao.PostDao;
 import com.securitymagick.domain.dao.UserDao;
+import com.securitymagick.service.CSRFTokenChecker;
 
 @Controller
 public class AdminController {
@@ -70,6 +71,9 @@ public class AdminController {
 
 	@Autowired
 	AdminDao adminDao;	
+	
+	@Autowired
+	CSRFTokenChecker csrfTokenChecker;
 	
 	@RequestMapping(value = "/admin", method = RequestMethod.GET)
 	public String showAdmin(HttpServletRequest request) {
@@ -217,8 +221,11 @@ public class AdminController {
 	@RequestMapping(value = "/admin", method = RequestMethod.POST, params={"deletetheaccount"})
 	public String deleteAccount(@ModelAttribute("user") User userToDelete,
 		BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-		userDao.deleteUser(userToDelete.getId());	
-		String message = "The user has been deleted!";
+		String message = "An unexpected error occurred.  You may need to logout and log back in.";
+		if (csrfTokenChecker.isValid(userToDelete.getCsrfToken(), request)) {		
+			userDao.deleteUser(userToDelete.getId());	
+			message = "The user has been deleted!";
+		}
 		request.setAttribute(MESSAGE_ATTRIBUTE_NAME, message);
 		request.setAttribute(SHOW_LOGS, "");
 		request.setAttribute(SHOW_COMMENTS, "");
@@ -301,8 +308,11 @@ public class AdminController {
 	@RequestMapping(value = "/admin", method = RequestMethod.POST, params={"edittheaccount"})
 	public String editAccount(@ModelAttribute("userToEdit") User userToEdit,
 		BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-		userDao.updateUser(userToEdit);	
-		String message = "The account has been modified!";
+		String message = "An unexpected error occurred.  You may need to logout and log back in.";
+		if (csrfTokenChecker.isValid(userToEdit.getCsrfToken(), request)) {		
+			userDao.updateUser(userToEdit);	
+			message = "The account has been modified!";
+		}
 		request.setAttribute(MESSAGE_ATTRIBUTE_NAME, message);
 		request.setAttribute(SHOW_LOGS, "");
 		request.setAttribute(SHOW_COMMENTS, "");
@@ -343,8 +353,11 @@ public class AdminController {
 	@RequestMapping(value = "/admin", method = RequestMethod.POST, params={"deletepost"})
 	public String deletePost(@ModelAttribute("post") Post postToDelete,
 		BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-		postDao.deletePost(postToDelete.getId());	
-		String message = "The post has been deleted!";
+		String message = "An unexpected error occurred.  You may need to logout and log back in.";
+		if (csrfTokenChecker.isValid(postToDelete.getCsrfToken(), request)) {		
+			postDao.deletePost(postToDelete.getId());	
+			message = "The post has been deleted!";
+		}
 		request.setAttribute(MESSAGE_ATTRIBUTE_NAME, message);
 		request.setAttribute(SHOW_COMMENTS, "");
 		request.setAttribute(SHOW_POSTS, SHOW_POSTS);	
@@ -384,8 +397,11 @@ public class AdminController {
 	@RequestMapping(value = "/admin", method = RequestMethod.POST, params={"editpost"})
 	public String editPost(@ModelAttribute("postToEdit") Post postToEdit,
 		BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-		postDao.updatePost(postToEdit);	
-		String message = "The post has been modified!";
+		String message = "An unexpected error occurred.  You may need to logout and log back in.";
+		if (csrfTokenChecker.isValid(postToEdit.getCsrfToken(), request)) {		
+			postDao.updatePost(postToEdit);	
+			message = "The post has been modified!";
+		}
 		request.setAttribute(MESSAGE_ATTRIBUTE_NAME, message);
 		request.setAttribute(SHOW_COMMENTS, "");
 		request.setAttribute(SHOW_POSTS, SHOW_POSTS);	

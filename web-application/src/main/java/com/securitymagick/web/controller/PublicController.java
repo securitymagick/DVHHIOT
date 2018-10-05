@@ -31,6 +31,7 @@ import com.securitymagick.domain.Notifications;
 import com.securitymagick.domain.dao.AdminDao;
 import com.securitymagick.domain.dao.PostDao;
 import com.securitymagick.domain.dao.UserDao;
+import com.securitymagick.service.CSRFTokenChecker;
 import com.securitymagick.web.cookie.CookieHandler;
 import com.securitymagick.web.cookie.NotificationCookie;
 import com.securitymagick.web.cookie.PermissionsCookie;
@@ -74,6 +75,9 @@ public class PublicController {
 	
 	@Autowired
 	UserDao userDao;
+	
+	@Autowired
+	CSRFTokenChecker csrfTokenChecker;
 
 	@RequestMapping(value = "/public", method = RequestMethod.GET)
 	public ModelAndView showPublic(HttpServletRequest request, HttpServletResponse response) {
@@ -204,20 +208,24 @@ public class PublicController {
 		request.setAttribute(PART2, "");
 		request.setAttribute(TITLE_ATTRIBUTE_NAME, "Habit Helper Forums -- Create your post");			
 		
-		Post p = new Post(null, forumPostForm.getTitle(), forumPostForm.getImageName(), forumPostForm.getAuthor(), forumPostForm.getThePost() ,null);
+		String message = "There is a problem with your request.  You may need to logout and login again to continue.";
+		if (csrfTokenChecker.isValid(forumPostForm.getCsrfToken(), request)) {		
+			Post p = new Post(null, forumPostForm.getTitle(), forumPostForm.getImageName(), forumPostForm.getAuthor(), forumPostForm.getThePost() ,null);
 
-		postDao.addPost(p);
+			postDao.addPost(p);
+			message = "Your post has been added.";
 		
-		NotificationCookie nCookie = new NotificationCookie();
-		Notifications n;
-		if (!nCookie.checkForCookie(request)) {
-			n = new Notifications();
-		} else {
-			n = new Notifications(nCookie.getNotificationsCookie().getValue());
+			NotificationCookie nCookie = new NotificationCookie();
+			Notifications n;
+			if (!nCookie.checkForCookie(request)) {
+				n = new Notifications();
+			} else {
+				n = new Notifications(nCookie.getNotificationsCookie().getValue());
+			}
+			n.setPost(true);
+			nCookie.addCookie(response, n);
 		}
-		n.setPost(true);
-		nCookie.addCookie(response, n);
-
+		request.setAttribute("message", message);
 		return PUBLIC_PAGE;		
 	}
 	
@@ -260,11 +268,14 @@ public class PublicController {
 	@RequestMapping(value = "/public", method = RequestMethod.POST, params={"addComment"})
 	public String addComment(@ModelAttribute("postComment") PostComment postComment,
 		BindingResult result, Model model, HttpServletRequest request, HttpServletResponse response) {
-				
-		postDao.addComment(postComment);	
-		Integer postid = new Integer(postComment.getPostid());
-		String message = "Your comment has been added!";
+		
+		String message = "There is a problem with your request.  You may need to logout and login again to continue.";
+		if (csrfTokenChecker.isValid(postComment.getCsrfToken(), request)) {
+			postDao.addComment(postComment);			
+			message = "Your comment has been added!";
+		}
 		request.setAttribute("message", message);
+		Integer postid = new Integer(postComment.getPostid());
 		List<Post> posts= postDao.getPostsWithComments();
 			
 		for (Post p1 : posts) {

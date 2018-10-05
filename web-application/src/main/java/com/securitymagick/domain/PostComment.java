@@ -10,6 +10,7 @@ public class PostComment {
 	private String comment;
 	private String postid;
 	private String username;
+	private String csrfToken = "";
 	
 	/**
 	 * 
@@ -28,6 +29,37 @@ public class PostComment {
 		this.comment = comment;
 		this.postid = postid;
 		this.username = username;
+	}
+	
+	
+
+	/**
+	 * @param id
+	 * @param comment
+	 * @param postid
+	 * @param username
+	 * @param csrfToken
+	 */
+	public PostComment(Integer id, String comment, String postid, String username, String csrfToken) {
+		this.id = id;
+		this.comment = comment;
+		this.postid = postid;
+		this.username = username;
+		this.csrfToken = csrfToken;
+	}
+
+	/**
+	 * @return the csrfToken
+	 */
+	public final String getCsrfToken() {
+		return csrfToken;
+	}
+
+	/**
+	 * @param csrfToken the csrfToken to set
+	 */
+	public final void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
 	}
 
 	/**

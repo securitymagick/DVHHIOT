@@ -13,6 +13,7 @@ public class User {
 	private String habit;
 	private Integer isUser;
 	private Integer isAdmin;
+	private String csrfToken = "";
 	
 	public User() {
 		super();
@@ -29,6 +30,44 @@ public class User {
 		this.isAdmin = isAdmin;
 	}
 	
+	
+	
+	/**
+	 * @param id
+	 * @param username
+	 * @param password
+	 * @param question
+	 * @param answer
+	 * @param habit
+	 * @param isUser
+	 * @param isAdmin
+	 * @param csrfToken
+	 */
+	public User(Integer id, String username, String password, String question, String answer, String habit,
+			Integer isUser, Integer isAdmin, String csrfToken) {
+		this(username, password, id, habit, isUser, isAdmin);
+		this.question = question;
+		this.answer = answer;
+		this.csrfToken = csrfToken;
+	}
+
+
+	/**
+	 * @return the csrfToken
+	 */
+	public final String getCsrfToken() {
+		return csrfToken;
+	}
+
+
+	/**
+	 * @param csrfToken the csrfToken to set
+	 */
+	public final void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
+	}
+
+
 	public String getUsername() {
 		return username;
 	}

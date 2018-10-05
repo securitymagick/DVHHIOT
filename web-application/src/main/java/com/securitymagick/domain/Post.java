@@ -14,6 +14,7 @@ public class Post {
 	private String author= null;
 	private String thePost=null;
 	List<String> comments = null;
+	private String csrfToken = "";
 
 	/**
 	 * 
@@ -43,6 +44,37 @@ public class Post {
 				this.comments.add(c);
 			}
 		}
+	}
+
+	
+	/**
+	 * @param id
+	 * @param title
+	 * @param imageName
+	 * @param author
+	 * @param thePost
+	 * @param comments
+	 * @param csrfToken
+	 */
+	public Post(Integer id, String title, String imageName, String author, String thePost, List<String> comments,
+			String csrfToken) {
+		this(id, title, imageName, author, thePost, comments);
+		this.csrfToken = csrfToken;
+	}
+
+	
+	/**
+	 * @return the csrfToken
+	 */
+	public final String getCsrfToken() {
+		return csrfToken;
+	}
+
+	/**
+	 * @param csrfToken the csrfToken to set
+	 */
+	public final void setCsrfToken(String csrfToken) {
+		this.csrfToken = csrfToken;
 	}
 
 	/**

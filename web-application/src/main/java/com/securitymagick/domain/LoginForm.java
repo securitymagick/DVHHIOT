@@ -7,6 +7,8 @@ package com.securitymagick.domain;
 public class LoginForm {
 	private String username;
 	private String password;
+	private boolean rememberme=false;
+	private String rememberMeToken = "";
 	
 	/**
 	 * 
@@ -23,6 +25,50 @@ public class LoginForm {
 		super();
 		this.username = username;
 		this.password = password;
+	}
+
+	
+	
+	/**
+	 * @param username
+	 * @param password
+	 * @param rememberme
+	 * @param rememberMeToken
+	 */
+	public LoginForm(String username, String password, boolean rememberme, String rememberMeToken) {
+		this.username = username;
+		this.password = password;
+		this.rememberme = rememberme;
+		this.rememberMeToken = rememberMeToken;
+	}
+
+	
+	/**
+	 * @return the rememberme
+	 */
+	public final boolean isRememberme() {
+		return rememberme;
+	}
+
+	/**
+	 * @param rememberme the rememberme to set
+	 */
+	public final void setRememberme(boolean rememberme) {
+		this.rememberme = rememberme;
+	}
+
+	/**
+	 * @return the rememberMeToken
+	 */
+	public final String getRememberMeToken() {
+		return rememberMeToken;
+	}
+
+	/**
+	 * @param rememberMeToken the rememberMeToken to set
+	 */
+	public final void setRememberMeToken(String rememberMeToken) {
+		this.rememberMeToken = rememberMeToken;
 	}
 
 	/**

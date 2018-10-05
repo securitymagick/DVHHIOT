@@ -1,14 +1,8 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ page import="com.securitymagick.domain.Permissions" %>
 <%@ page import="com.securitymagick.domain.Notifications" %>
 <%@ page import="com.securitymagick.web.cookie.CookieHandler" %>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-<spring:url value="/resources/core/js/hello.js" var="coreJs" />
-<spring:url value="/resources/core/js/bootstrap.min.js" var="bootstrapJs" />
- 
-<script src="${coreJs}"></script>
-<script src="${bootstrapJs}"></script>
 
 		<% 
 			Boolean mobile = false;
@@ -27,7 +21,8 @@
   <div class="container">
 	<div class="navbar-header">
 		<a class="navbar-brand" href="/habit-helper-1.0">
-		<font color="orange">
+		<div style="text-shadow: 2px 2px orange;">
+		<font color="black">
 		<i class='glyphicon glyphicon-header'></i>
 		<i class='glyphicon glyphicon-glass'></i>		
 		<i class='glyphicon glyphicon-header'></i>
@@ -37,6 +32,7 @@
 		</c:if>
 		
 		</font>
+		</div>
 		</a>
 
 		<ul class="nav nav-tabs">
@@ -64,11 +60,16 @@
 			<li><a href="myAccount">Your Account</a> </li>		
 			<li><a href="logout">Sign Out</a></li>
 			
-		<% } %>				
+		<% } %>	
+		<c:if test="${not empty resetpasswordEmail}">
+			<li><a href="#" data-toggle="modal" data-target="#myEmail"> NEW EMAIL</a></li>
+		</c:if>						
 		</ul>
+		
 		
 	</div>
   </div>
+  <div id="line"></div>
 </nav>
 
   <div class="modal fade" id="myModal" role="dialog">
@@ -94,7 +95,29 @@
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
       </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="myEmail" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          
+          <h4 class="modal-title">Your New Reset Password Email</h4>
+         </div>
+        <div class="modal-body">
+          <p id="resetPasswordTxt">${resetpasswordEmail}</p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
       
     </div>
-  </div>
+</div>    
+
   <% } %>

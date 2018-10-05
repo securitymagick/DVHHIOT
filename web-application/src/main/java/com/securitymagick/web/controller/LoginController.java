@@ -1,5 +1,14 @@
 package com.securitymagick.web.controller;
 
+import static com.securitymagick.AppConstants.CSRF_COOKIE_NAME;
+import static com.securitymagick.AppConstants.csrfProtection;
+import static com.securitymagick.AppConstants.csrfProtectionGoodRandom;
+import static com.securitymagick.AppConstants.localStorageCsrfProtection;
+
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,10 +26,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.securitymagick.domain.AuthToken;
+import com.securitymagick.domain.BadRandomToken;
+import com.securitymagick.domain.GoodRandomToken;
 import com.securitymagick.domain.LogMessage;
 import com.securitymagick.domain.LoginForm;
 import com.securitymagick.domain.Notifications;
 import com.securitymagick.domain.Permissions;
+import com.securitymagick.domain.RandomToken;
 import com.securitymagick.domain.User;
 import com.securitymagick.domain.dao.LogDao;
 import com.securitymagick.domain.dao.UserDao;
@@ -51,26 +63,65 @@ public class LoginController {
 		CookieHandler userCookie = new CookieHandler("user");
 		
 		List<User> ulist = userDao.getUser(loginForm.getUsername());
-		
-		if (ulist.size() != 1) {
-			String message = "An unexpected error occurred.  Please contact the admin";
+		String message = "An unexpected error occurred.  Please contact the Bob or Harry.";
+		if (ulist.size() != 1) {		
 			request.setAttribute(MESSAGE_ATTRIBUTE, message);
 			return "redirect:/?login=yes&" + MESSAGE_ATTRIBUTE + "="+message;			
 		}
 		
+		String rememberMeToken = "";
 		User u = ulist.get(0);
+		Boolean loggedOn = false;
+		if (loginForm.isRememberme() && !loginForm.getRememberMeToken().isEmpty()) {
+			 try {
+					MessageDigest md5 = MessageDigest.getInstance("MD5");
+					md5.update(StandardCharsets.UTF_8.encode(u.getPassword()));
+					rememberMeToken = String.format("%032x", new BigInteger(1, md5.digest()));
+				} catch (NoSuchAlgorithmException e) {
+					request.setAttribute(MESSAGE_ATTRIBUTE, message);
+					return "redirect:/?login=yes&" + MESSAGE_ATTRIBUTE + "="+message;		
+				}
+			 if (loginForm.getRememberMeToken().equals(rememberMeToken)) {
+				 loggedOn = true;
+			 }
+		}
 		
 		if (loginForm.getPassword().equals(u.getPassword())) {
+			loggedOn = true;
+		}
+		
+		if (loggedOn) {
 			Permissions p = new Permissions(u.getIsUser().equals(1), u.getIsAdmin().equals(1));
 			pCookie.addCookie(response, p.getCookieValue());
 			AuthToken aToken = new AuthToken(u.getId());
-			userCookie.addCookie(response, aToken.getToken());			
-			return "redirect:/myAccount";
+			userCookie.addCookie(response, aToken.getToken());	
+			
+			if (loginForm.isRememberme() && rememberMeToken.isEmpty()) {
+				try {
+					MessageDigest md5 = MessageDigest.getInstance("MD5");
+					md5.update(StandardCharsets.UTF_8.encode(loginForm.getPassword()));
+					rememberMeToken = "&rememberMeToken=" + String.format("%032x", new BigInteger(1, md5.digest()));
+				} catch (NoSuchAlgorithmException e) {
+					rememberMeToken = "";
+				}
+			} else {
+				rememberMeToken= "";
+			}
+			
+			RandomToken r;
+			r = new BadRandomToken();
+			String token = r.getNewToken();
+			CookieHandler csrfCookie = new CookieHandler("CSRFTOKEN");	
+			csrfCookie.addCookie(response, token);
+			token = "?newCsrfToken=" + token;
+				
+			return "redirect:/myAccount" + token + rememberMeToken;			
+			//return "redirect:/myAccount";
 		} else {
 			Permissions p = new Permissions();
 			pCookie.addCookie(response, p.getCookieValue());
 			userCookie.addCookie(response, "");
-			String message = "Incorrect username or password.  If you forgot your password please use the forgot password link.";
+			message = "Incorrect username or password.  If you forgot your password please use the forgot password link.";
 			request.setAttribute(MESSAGE_ATTRIBUTE, message);
 			return "redirect:?login=yes&" + MESSAGE_ATTRIBUTE + "=" + message;
 		}

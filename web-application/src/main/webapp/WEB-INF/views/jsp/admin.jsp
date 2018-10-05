@@ -99,6 +99,7 @@
 	<br/>
 	<form:form id="fm3" modelAttribute="postToDelete" method="post" action="?deletepost">
 	<form:input type="hidden" name="id" path="id" value="${post.id}" />
+	<form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 
 	<div class="row">
 		
@@ -119,6 +120,7 @@
 	<br/>
 	<form:form id="fm4" modelAttribute="postToEdit" method="post" action="?editpost">
 	<form:input type="hidden" name="id" path="id" value="${post.id}" />
+	<form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 	<div class="row">
 		<div class="col-md-5 col-md-offset-1">
 			<p> Enter Title (Inspiring or Call for Help): </p>
@@ -192,6 +194,7 @@
 	<br/>
 	<form:form id="fm1" modelAttribute="userToDelete" method="post" action="?deletetheaccount=${user.id}">
 	<form:input type="hidden" name="id" path="id" value="${user.id}" />
+	<form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 
 	<div class="row">
 		<div class="col-md-5 col-md-offset-1">
@@ -210,6 +213,7 @@
 	<br/>User: ${user.username}
 	<form:form id="fm2" modelAttribute="userToEdit" method="post" action="?edittheaccount=${user.id}">
 	<form:input type="hidden" name="id" path="id" value="${user.id}" />
+	<form:input type="hidden" id="csrfToken" name="csrfToken" path="csrfToken" value="" />
 	<div class="row">
 		<div class="col-md-5 col-md-offset-1">
 			<p> Habit: </p>
@@ -341,6 +345,6 @@
   </footer>
 </div>
  
- 
+ <jsp:include page='javascript_includes.jsp'></jsp:include> 
 </body>
 </html>
